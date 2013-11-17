@@ -16,8 +16,8 @@ def main(folder, pkl_filename, options={}):
         , colloc_num_per_round=3 if 'colloc_per_round' not in options else int(options['colloc_per_round'])
         , colloc_rounds=4
     )
-    with open(pkl_filename) as fp:
-        pickle.dump(fp, pd)
+    with open(pkl_filename, 'w') as fp:
+        pickle.dump(pd, fp)
 
 
 if __name__ == "__main__":
