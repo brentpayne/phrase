@@ -13,22 +13,28 @@ class PhraseDictionary(dict):
 
     def __init__(self, phrases=None, word_list=None):
         self.id2phrase = {}
-        self.phrase_id_gen = self.phrase_id_generator()
+        self.next_id = -1
+        #self.phrase_id_gen = self.phrase_id_generator() cannot pickle generator
         self.word_list = word_list if word_list else WordList()
         if phrases:
             map(self.add_phrase, phrases)
 
-    def phrase_id_generator(self):
-        """
-        A generator for automatically labeling the next added phrase.
-        Phrase IDs are negative by convention, as Word IDs are positive by convention.
-        This is make it easy to extend and mix word ids and phrase ids without using the class system.
-        :return: the next negative phrase ID
-        """
-        id = 0
-        while True:
-            id -= 1
-            yield id
+    # def phrase_id_generator(self):
+    #     """
+    #     A generator for automatically labeling the next added phrase.
+    #     Phrase IDs are negative by convention, as Word IDs are positive by convention.
+    #     This is make it easy to extend and mix word ids and phrase ids without using the class system.
+    #     :return: the next negative phrase ID
+    #     """
+    #     id = 0
+    #     while True:
+    #         id -= 1
+    #         yield id
+
+    def get_next_id(self):
+        rv = self.next_id
+        self.next_id -= 1
+        return rv
 
 
     def add_phrase(self, phrase, id=None):
@@ -39,7 +45,7 @@ class PhraseDictionary(dict):
             them all as the auto-generated ids do not take into account phrase_ids set this way.
         :return: None
         """
-        phrase_id = id if id is not None else self.phrase_id_gen.next()
+        phrase_id = id if id is not None else self.get_next_id()
         PhraseDictionary._add_phrase(copy(phrase), phrase_id, self, self.word_list)
         self.id2phrase[phrase_id] = phrase
 
