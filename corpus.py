@@ -27,6 +27,7 @@ class FileCorpus(list):
     def next(self):
         self.idx += 1
         try:
+            print "opening", self[self.idx]
             with open(self[self.idx]) as fp:
                 txt = "".join(fp)
             return txt
