@@ -1,0 +1,9 @@
+Hum Vaccin Immunother. 2013 Nov 13;10(2). [Epub ahead of print]
+Yersinia pestis biovar Microtus strain 201, an avirulent strain to humans, provides protection against bubonic plague in rhesus macaques.
+Zhang Q, Wang Q, Tian G, Qi Z, Zhang X, Wu X, Qiu Y, Bi Y, Yang X, Xin Y, He J, Zhou J, Zeng L, Yang R, Wang X.
+Source
+Anhui Medical University; Hefei, Anhui PR China; Qinghai Institute for Endemic Disease Prevention and Control of Qinghai Province; Xining, PR China.
+Abstract
+Yersinia pestis biovar Microtus is considered to be avirulent to larger mammals with, including guinea pigs, rabbits and humans. It may be used as live attenuated plague vaccine candidates in terms of its low virulence. However, the Microtus strain's protection against plague has yet to be demonstrated in larger mammals. In this study, we evaluated the protective efficacy of the Microtus strain 201 as a live attenuated plague vaccine candidate. Our results show that this strain is highly attenuated by subcutaneous route, elicits an F1-specific antibody titer similar to the EV and provides a protective efficacy similar to the EV against bubonic plague in Chinese-origin rhesus macaques. The Microtus strain 201 could induce elevated secretion of both Th1-associated cytokines (IFN-γ, IL-2 and TNF-α) and Th2-associated cytokines (IL-4, IL-5 and IL-6), as well as chemokines MCP-1 and IL-8. However, the protected animals developed skin ulcer at challenge site with different severity in most of the immunized and some of the EV-immunized monkeys. Generally, the Microtus strain 201 represented a good plague vaccine candidate based on its ability to generate strong humoral and cell-mediated immune responses as well as its good protection against high dose of subcutaneous virulent Y. pestis challenge.
+KEYWORDS:
+Rhesus macaques, Yersinia pestis, live attenuated vaccine, plague, protection

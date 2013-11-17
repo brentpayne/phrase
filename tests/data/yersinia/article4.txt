@@ -1,0 +1,8 @@
+J Food Prot. 2013 Nov;76(11):1948-57. doi: 10.4315/0362-028X.JFP-13-153.
+Customizable PCR-Microplate Array for Differential Identification of Multiple Pathogens.
+Woubit A, Yehualaeshet T, Roberts S, Graham M, Kim M, Samuel T.
+Source
+Department of Pathobiology, College of Veterinary Medicine, Nursing and Allied Health, Tuskegee University, Tuskegee, Alabama 36088, USA. wabdela@mytu.tuskegee.edu.
+Abstract
+Customizable PCR-microplate arrays were developed for the rapid identification of Salmonella Typhimurium, Salmonella Saintpaul, Salmonella Typhi, Shigella dysenteriae, Escherichia coli O157:H7, Francisella tularensis subsp. tularensis, Francisella tularensis subsp. novicida, Vibrio cholerae, Vibrio parahaemolyticus, Yersinia pestis, and Yersinia pseudotuberculosis. Previously, we identified highly specific primers targeting each of these pathogens. Here, we report the development of customizable PCR-microplate arrays for simultaneous identification of the pathogens using the primers identified. A mixed aliquot of genomic DNA from 38 strains was used to validate three PCR-microplate array formats. Identical PCR conditions were used to run all the samples on the three formats. Specific amplifications were obtained on all three custom plates. In preliminary tests performed to evaluate the sensitivity of these assays in samples inoculated in the laboratory with Salmonella Typhimurium, amplifications were obtained from 1 g of beef hot dog inoculated at as low as 9 CFU/ml or from milk inoculated at as low as 78 CFU/ml. Such microplate arrays could be valuable tools for initial identification or secondary confirmation of contamination by these pathogens.
+PMID: 24215700 [PubMed - in process]

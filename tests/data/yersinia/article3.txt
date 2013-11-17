@@ -1,0 +1,9 @@
+Microbiology. 2013 Nov 12. doi: 10.1099/mic.0.073205-0. [Epub ahead of print]
+Temperature-dependence of yadBC phenotypes in Yersinia pestis.
+Uittenbogaard AM, Myers-Morales T, Gorman AA, Welsh E, Wulff C, Hinnebusch BJ, Korhonen TK, Straley SC.
+Source
+University of Kentucky;
+Abstract
+YadB and YadC are putative trimeric autotransporters present only in the plague bacterium Yersinia pestis and its evolutionary predecessor, Y. pseudotuberculosis. Previously, yadBC was found to promote invasion of epithelioid cells by Y. pestis grown at 37oC. In this study, we found that yadBC also promotes uptake of 37oC-grown Y. pestis by mouse monocyte/macrophage cells. We tested whether yadBC might be required for lethality of the systemic stage of plague in which the bacteria would be preadapted to mammalian body temperature before colonizing internal organs and found no requirement for early colonization or growth over three days. We tested the hypothesis that YadB and YadC function on ambient temperature-grown Y. pestis in the flea vector or soon after infection of the dermis in bubonic plague. yadBC did not promote uptake by monocyte/macrophage cells if the bacteria were grown at 28oC, nor was there a role of yadBC in colonization of fleas by Y. pestis grown at 21oC. However, the presence of yadBC did promote recoverability of the bacteria from infected skin for 28oC-grown Y. pestis. Further, the gene for the proinflammatory chemokine CXCL1 was upregulated in expression if the infecting Y. pestis lacked yadBC but not if yadBC was present. yadBC was not required for recoverability if the bacteria were grown at 37oC. These findings imply that thermally induced virulence properties dominate over effects of yadBC during plague but that yadBC has a unique function early after transmission of Y. pestis to skin.
+KEYWORDS:
+YadC, Yersinia, autotransporter, plague
