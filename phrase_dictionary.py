@@ -128,9 +128,9 @@ class PhraseDictionary(dict):
         """
         if idx < len(run) and run[idx] in dictionary:
             id = run[idx]
-            rv, idx = PhraseDictionary.return_max_phrase(run, idx+1, dictionary[id])
+            rv, rv_idx = PhraseDictionary.return_max_phrase(run, idx+1, dictionary[id])
             if rv is not None:
-                return rv, idx
+                return rv, rv_idx
 
         if None in dictionary:
             return dictionary[None], idx

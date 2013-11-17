@@ -22,7 +22,7 @@ Feature: Identify phrases in a corpus
             | yersinia |
         Generate common phrases:
             | phrase_count | colloc_per_round |
-            | 50 | 10 |
+            | 50 | 50 |
         The following phrases were identified:
             | phrase |
             | Yersinia pestis |
