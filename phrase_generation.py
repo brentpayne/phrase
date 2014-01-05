@@ -77,6 +77,7 @@ def convert_to_merged_ids(id_run, dictionary):
 def update_dictionary(dictionary, merges, deletes):
     pass
 
+EXCLUDE_SET = (':',")","(",",","'","\"","-","a","on","the","!","?","of","n't","'re", "to")
 
 from nltk import pos_tag, word_tokenize as wtk, sent_tokenize as stk
 def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_number_of_phrases=10, colloc_num_per_round=3, colloc_rounds=4):
@@ -94,7 +95,7 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
     collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
 
     collocation_finder.apply_freq_filter(word_filter_num)  # @TODO remove bottom X%, and tune on X
-    collocation_finder.apply_ngram_filter(lambda w1, w2: w2[1] not in ('NNP', 'NN'))
+    collocation_finder.apply_ngram_filter(lambda w1, w2: w2[1] not in ('NNP', 'NN') or w2[0] in EXCLUDE_SET)
     bigram_measures = nltk.collocations.BigramAssocMeasures()
     phrases = collocation_finder.nbest(bigram_measures.chi_sq, colloc_num_per_round)
     print('first phrases', phrases)
@@ -123,10 +124,10 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
     map(lambda x: count_phrase_tokens_only(x, pd, phrase_counts), imap(stk, corpus))
 
     print('Selected phrases')
-    pprint([ (pd.get_phrase(item[0]), item) for item in phrase_counts.most_common(total_number_of_phrases)])
+    pprint([ (pd.get_phrase(item[0]), item) for item in collocation_finder.nbest(bigram_measures.chi_sq, colloc_num_per_round)])
     pd_filtered = PhraseDictionary(imap(lambda phc: pd.get_phrase(phc[0]), phrase_counts.most_common(total_number_of_phrases)))
 
-    return pd_filtered
+    return pd
 
 def run_another_phase_generation_round(corpus, pd, filter_num, colloc_num):
     def convert_to_phrase_tokens(text):
@@ -154,7 +155,7 @@ def run_another_phase_generation_round(corpus, pd, filter_num, colloc_num):
 
     collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
     collocation_finder.apply_freq_filter(filter_num)  # @TODO remove bottom X%, and tune on X
-    collocation_finder.apply_ngram_filter(lambda w1, w2: w1[1] not in ('NNP','NN'))
+    collocation_finder.apply_ngram_filter(lambda w1, w2: w2[1] not in ('NNP','NN') or w2[0] in EXCLUDE_SET)
     bigram_measures = nltk.collocations.BigramAssocMeasures()
     phrases = collocation_finder.nbest(bigram_measures.chi_sq, colloc_num)
     phrase_runs = [convert_run_to_text_token_run([p[0][0], p[1][0]], phrase_dictionary=pd) for p in phrases]

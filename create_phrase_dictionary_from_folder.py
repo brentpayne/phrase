@@ -10,11 +10,11 @@ def main(folder, pkl_filename, options={}):
     corpus.add_folder(folder)
     pd = generate_phrases(
         corpus
-        , word_filter_num=10
+        , word_filter_num=5
         , phrase_filter_num=5
-        , total_number_of_phrases=1000 if 'phrase_count' not in options else int(options['phrase_count'])
-        , colloc_num_per_round=200 if 'colloc_per_round' not in options else int(options['colloc_per_round'])
-        , colloc_rounds=5
+        , total_number_of_phrases=400 if 'phrase_count' not in options else int(options['phrase_count'])
+        , colloc_num_per_round=300 if 'colloc_per_round' not in options else int(options['colloc_per_round'])
+        , colloc_rounds=4
     )
     with open(pkl_filename, 'w') as fp:
         pickle.dump(pd, fp)
