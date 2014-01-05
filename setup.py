@@ -28,7 +28,7 @@ setup(name='phrase',
         package_dir = {'': '.'},
         entry_points="""
             [console_scripts]
-            create_phrase_dictionary = phrase/create_phrase_dictionary_from_folder.py
-            create_word2vec_model = phrase/create_word2vec_model.py
+            create_phrase_dictionary = phrase.create_phrase_dictionary_from_folder:main
+            create_word2vec_model = phrase.create_word2vec_model:main
         """
-
+)
