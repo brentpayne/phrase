@@ -2,15 +2,6 @@ import sys
 from setuptools import setup, find_packages
 from distutils.core import Command
 
-class DisabledCommands(Command):
-    user_options = []
-
-    def initialize_options(self):
-        raise Exception('This command is disabled')
-
-    def finalize_options(self):
-        raise Exception('This command is disabled')
-
 osx_requirements = [
 ]
 
@@ -35,6 +26,9 @@ setup(name='phrase',
         install_requires=requirements,
         packages=find_packages('.'),
         package_dir = {'': '.'},
-        cmdclass = {'register': DisabledCommands,
-                    'upload': DisabledCommands}
-        )
+        entry_points="""
+            [console_scripts]
+            create_phrase_dictionary = phrase/create_phrase_dictionary_from_folder.py
+            create_word2vec_model = phrase/create_word2vec_model.py
+        """
+
