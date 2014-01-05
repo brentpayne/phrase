@@ -5,7 +5,12 @@ from phrase_generation import generate_phrases
 __author__ = 'brentpayne'
 
 
-def main(folder, pkl_filename, options={}):
+def main():
+    import sys
+    print sys.argv
+    folder = sys.argv[1]
+    pkl_filename = sys.argv[2]
+    options = {}
     corpus = FileCorpus()
     corpus.add_folder(folder)
     pd = generate_phrases(
@@ -21,6 +26,4 @@ def main(folder, pkl_filename, options={}):
 
 
 if __name__ == "__main__":
-    import sys
-    print sys.argv
-    main(sys.argv[1], sys.argv[2])
+    main()
