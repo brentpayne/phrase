@@ -125,7 +125,7 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
 
     print('Selected phrases')
     pprint([ (pd.get_phrase(item[0]), item) for item in collocation_finder.nbest(bigram_measures.chi_sq, colloc_num_per_round)])
-    pd_filtered = PhraseDictionary(imap(lambda phc: pd.get_phrase(phc[0]), phrase_counts.most_common(total_number_of_phrases)))
+    # pd_filtered = PhraseDictionary(imap(lambda phc: pd.get_phrase(phc[0]), phrase_counts.most_common(total_number_of_phrases)))
 
     return pd
 
