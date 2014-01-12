@@ -2,8 +2,8 @@ from collections import Counter
 from itertools import chain, imap
 from pprint import pprint
 import nltk
+from phrase.phrase_dictionary import convert_run_to_text, convert_run_to_text_token_run
 from phrase_dictionary import PhraseDictionary
-from tokenization import convert_to_idruns
 
 __author__ = 'brentpayne'
 
@@ -20,58 +20,8 @@ def identify_merges(bc, wc):
     pass
 
 
-
-
-
 def identify_deletes(word_counts):
     pass
-
-
-
-def convert_run_to_text(id_run, wordlist=None, phrase_dictionary=None):
-    rv = []
-    for id in id_run:
-        if wordlist and wordlist.contains(id):
-            rv.append(wordlist.get_token(id))
-        elif phrase_dictionary and phrase_dictionary.contains(id):
-            rv.append("_".join(convert_run_to_text(phrase_dictionary.get_phrase(id), wordlist, phrase_dictionary)))
-        else:
-            rv.append(id)
-
-    return rv
-
-def convert_run_to_text_token_run(id_run, wordlist=None, phrase_dictionary=None):
-    rv = []
-    for id in id_run:
-        if wordlist and wordlist.contains(id):
-            rv.append(wordlist.get_token(id))
-        elif phrase_dictionary and phrase_dictionary.contains(id):
-            rv.extend(convert_run_to_text_token_run(phrase_dictionary.get_phrase(id), wordlist, phrase_dictionary))
-        else:
-            rv.append(id)
-
-    return rv
-
-def convert_to_merged_ids(id_run, dictionary):
-    """
-    Converts any identified phrases in the run into phrase_ids.  The dictionary provides all acceptable phrases
-    :param id_run: a run of token ids
-    :param dictionary: a dictionary of acceptable phrases described as there component token ids
-    :return: a run of token and phrase ids.
-    """
-    i = 0
-    rv = []
-    while i < len(id_run):
-        phrase_id, offset = PhraseDictionary.return_max_phrase(id_run, i, dictionary)
-        if phrase_id:
-            rv.append(phrase_id)
-            i = offset
-        else:
-            rv.append(id_run[i])
-            i += 1
-    return rv
-
-
 
 
 def update_dictionary(dictionary, merges, deletes):
@@ -79,7 +29,12 @@ def update_dictionary(dictionary, merges, deletes):
 
 EXCLUDE_SET = (':',")","(",",","'","\"","-","a","on","the","!","?","of","n't","'re", "to")
 
-from nltk import pos_tag, word_tokenize as wtk, sent_tokenize as stk
+def exclude_ngram_filter(w1,w2):
+    try:
+        return w2[1] not in ('NNP', 'NN', 'VBG', 'NNS', 'NNPS', 'FW', 'CD') or w2[0] in EXCLUDE_SET
+    except Exception as e:
+        raise
+
 def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_number_of_phrases=10, colloc_num_per_round=3, colloc_rounds=4):
     """
 
@@ -96,7 +51,8 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
     collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
     print ("here")
     collocation_finder.apply_freq_filter(word_filter_num)  # @TODO remove bottom X%, and tune on X
-    collocation_finder.apply_ngram_filter(lambda w1, w2: w2[1] not in ('NNP', 'NN') or w2[0] in EXCLUDE_SET)
+    #collocation_finder.apply_ngram_filter(lambda w1, w2: w2[1] not in ('NNP', 'NN') or w2[0] in EXCLUDE_SET)
+    collocation_finder.apply_ngram_filter(exclude_ngram_filter)
     bigram_measures = nltk.collocations.BigramAssocMeasures()
     phrases = collocation_finder.nbest(bigram_measures.chi_sq, colloc_num_per_round)
     print('first phrases', phrases)

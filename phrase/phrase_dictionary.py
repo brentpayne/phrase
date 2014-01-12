@@ -136,3 +136,93 @@ class PhraseDictionary(dict):
             return dictionary[None], idx
         else:
             return None, None
+
+    def merge_tokens(self, word_tokens):
+        if word_tokens is None or len(word_tokens)<0:
+            return ""
+        phrase_ids = convert_to_merged_ids(word_tokens, self)
+        return convert_run_to_text(phrase_ids, phrase_dictionary=self)
+
+    def merge_pos_tokens(self, pos_tokens):
+        """
+        takes an array of Part of Speech labeled tokens and returns a set of tokens where word tokens have been merged into Noun phrases.
+        :param pos_tokens: an array of (token, POS)
+        :returns: returns an array of word and phrase tokens
+        """
+        if pos_tokens is None or len(pos_tokens)<0:
+            return ""
+        tokens, pos = zip(*pos_tokens)
+        phrase_ids = convert_noun_phrases(tokens, pos, self)
+        return convert_run_to_text(phrase_ids, phrase_dictionary=self)
+
+
+def convert_run_to_text(id_run, wordlist=None, phrase_dictionary=None):
+    rv = []
+    for id in id_run:
+        if wordlist and wordlist.contains(id):
+            rv.append(wordlist.get_token(id))
+        elif phrase_dictionary and phrase_dictionary.contains(id):
+            rv.append("_".join(convert_run_to_text(phrase_dictionary.get_phrase(id), wordlist, phrase_dictionary)))
+        else:
+            rv.append(id)
+
+    return rv
+
+
+def convert_to_merged_ids(id_run, dictionary):
+    """
+    Converts any identified phrases in the run into phrase_ids.  The dictionary provides all acceptable phrases
+    :param id_run: a run of token ids
+    :param dictionary: a dictionary of acceptable phrases described as there component token ids
+    :return: a run of token and phrase ids.
+    """
+    i = 0
+    rv = []
+    while i < len(id_run):
+        phrase_id, offset = PhraseDictionary.return_max_phrase(id_run, i, dictionary)
+        if phrase_id:
+            rv.append(phrase_id)
+            i = offset
+        else:
+            rv.append(id_run[i])
+            i += 1
+    return rv
+
+
+def convert_noun_phrases(id_run, pos_run, dictionary):
+    """
+    Converts any identified phrases in the run into phrase_ids.  The dictionary provides all acceptable phrases
+    :param id_run: a run of token ids
+    :param dictionary: a dictionary of acceptable phrases described as there component token ids
+    :return: a run of token and phrase ids.
+    """
+    i = 0
+    rv = []
+    while i < len(id_run):
+        phrase_id, offset = PhraseDictionary.return_max_phrase(id_run, i, dictionary)
+        if phrase_id:
+            if pos_run[i] in ('JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP', 'NNPS', 'SYM', 'CD', 'VBG', 'FW'):
+                print "MERGED", pos_run[i], dictionary.get_phrase(phrase_id)
+                rv.append(phrase_id)
+                i = offset
+            else:
+                print "SKIPPED", pos_run[i], dictionary.get_phrase(phrase_id)
+                rv.append(id_run[i])
+                i +=1
+        else:
+            rv.append(id_run[i])
+            i += 1
+    return rv
+
+
+def convert_run_to_text_token_run(id_run, wordlist=None, phrase_dictionary=None):
+    rv = []
+    for id in id_run:
+        if wordlist and wordlist.contains(id):
+            rv.append(wordlist.get_token(id))
+        elif phrase_dictionary and phrase_dictionary.contains(id):
+            rv.extend(convert_run_to_text_token_run(phrase_dictionary.get_phrase(id), wordlist, phrase_dictionary))
+        else:
+            rv.append(id)
+
+    return rv

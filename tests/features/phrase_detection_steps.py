@@ -1,5 +1,4 @@
-from phrase_dictionary import PhraseDictionary
-from phrase_generation import convert_to_merged_ids, convert_run_to_text
+from phrase.phrase_dictionary import PhraseDictionary, convert_run_to_text, convert_to_merged_ids
 
 __author__ = 'brentpayne'
 

@@ -3,7 +3,8 @@ import pickle
 from gensim.models import Word2Vec
 from nltk import pos_tag, word_tokenize as wtk, sent_tokenize as stk
 from corpus import FileCorpus
-from phrase_generation import generate_phrases, convert_to_merged_ids, convert_run_to_text
+from phrase.phrase_dictionary import convert_run_to_text, convert_to_merged_ids
+from phrase_generation import generate_phrases
 
 
 __author__ = 'brentpayne'
