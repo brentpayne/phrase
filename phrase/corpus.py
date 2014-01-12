@@ -30,6 +30,7 @@ class FileCorpus(list):
             print "opening", self[self.idx]
             with open(self[self.idx]) as fp:
                 txt = "".join(fp)
+            print "text", txt
             return txt
         except IndexError as _:
             self.reset()

@@ -91,9 +91,10 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
     :param colloc_rounds:
     :return:
     """
-    tokens = chain.from_iterable(imap(pos_tag, imap(wtk, chain.from_iterable(imap(stk, corpus)))))
+    #tokens = chain.from_iterable(imap(pos_tag, imap(wtk, chain.from_iterable(imap(stk, corpus)))))
+    tokens = chain.from_iterable(chain.from_iterable(corpus))
     collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
-
+    print ("here")
     collocation_finder.apply_freq_filter(word_filter_num)  # @TODO remove bottom X%, and tune on X
     collocation_finder.apply_ngram_filter(lambda w1, w2: w2[1] not in ('NNP', 'NN') or w2[0] in EXCLUDE_SET)
     bigram_measures = nltk.collocations.BigramAssocMeasures()
@@ -105,8 +106,10 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
     for i in xrange(colloc_rounds-1):
         run_another_phase_generation_round(corpus, pd, phrase_filter_num, colloc_num_per_round)
 
-    def count_phrase_tokens_only(text, pd, counts):
-        tokens = list(chain.from_iterable(imap(wtk, text)))
+    def count_phrase_tokens_only(pos_sent, pd, counts):
+        #tokens = list(chain.from_iterable(imap(wtk, text)))
+        print pos_sent
+        tokens = [posword[0] for posword in pos_sent]
 
         icurrent = 0
         id_run = []
@@ -121,7 +124,8 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
         return counts.update(id_run)
 
     phrase_counts = Counter()
-    map(lambda x: count_phrase_tokens_only(x, pd, phrase_counts), imap(stk, corpus))
+    #map(lambda x: count_phrase_tokens_only(x, pd, phrase_counts), imap(stk, corpus))
+    map(lambda x: count_phrase_tokens_only(x, pd, phrase_counts), chain.from_iterable(corpus))
 
     print('Selected phrases')
     pprint([ (pd.get_phrase(item[0]), item) for item in collocation_finder.nbest(bigram_measures.chi_sq, colloc_num_per_round)])
@@ -130,8 +134,8 @@ def generate_phrases(corpus, word_filter_num=1, phrase_filter_num=2, total_numbe
     return pd
 
 def run_another_phase_generation_round(corpus, pd, filter_num, colloc_num):
-    def convert_to_phrase_tokens(text):
-        pos_tokens = imap(pos_tag, imap(wtk, text))
+    def convert_to_phrase_tokens(pos_tokens):
+        #pos_tokens = imap(pos_tag, imap(wtk, text))
         poses = []
         tokens = []
         for tk, pos in chain.from_iterable(pos_tokens):
@@ -151,7 +155,8 @@ def run_another_phase_generation_round(corpus, pd, filter_num, colloc_num):
 
         return id_run
 
-    tokens = chain.from_iterable(imap(convert_to_phrase_tokens, imap(stk, corpus)))
+    #tokens = chain.from_iterable(imap(convert_to_phrase_tokens, imap(stk, corpus)))
+    tokens = chain.from_iterable(imap(convert_to_phrase_tokens, corpus))
 
     collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
     collocation_finder.apply_freq_filter(filter_num)  # @TODO remove bottom X%, and tune on X
