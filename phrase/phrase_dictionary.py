@@ -152,8 +152,10 @@ class PhraseDictionary(dict):
         if pos_tokens is None or len(pos_tokens)<0:
             return ""
         tokens, pos = zip(*pos_tokens)
-        phrase_ids = convert_noun_phrases(tokens, pos, self)
-        return convert_run_to_text(phrase_ids, phrase_dictionary=self)
+        pos_phrase_ids = convert_noun_phrases(tokens, pos, self)
+        phrase_ids, phrase_pos = zip(*pos_phrase_ids)
+        phrase_text = convert_run_to_text(phrase_ids, phrase_dictionary=self)
+        return zip(phrase_text, phrase_pos)
 
 
 def convert_run_to_text(id_run, wordlist=None, phrase_dictionary=None):
@@ -201,16 +203,16 @@ def convert_noun_phrases(id_run, pos_run, dictionary):
     while i < len(id_run):
         phrase_id, offset = PhraseDictionary.return_max_phrase(id_run, i, dictionary)
         if phrase_id:
-            if pos_run[i] in ('JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP', 'NNPS', 'SYM', 'CD', 'VBG', 'FW'):
+            if pos_run[i] in ('JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP', 'NNPS', 'SYM', 'CD', 'VBG', 'FW', 'NP'):
                 print "MERGED", pos_run[i], dictionary.get_phrase(phrase_id)
-                rv.append(phrase_id)
+                rv.append((phrase_id,'NP'))
                 i = offset
             else:
                 print "SKIPPED", pos_run[i], dictionary.get_phrase(phrase_id)
-                rv.append(id_run[i])
-                i +=1
+                rv.append((id_run[i], pos_run[i]))
+                i += 1
         else:
-            rv.append(id_run[i])
+            rv.append((id_run[i], pos_run[i]))
             i += 1
     return rv
 
