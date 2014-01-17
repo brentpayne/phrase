@@ -92,7 +92,7 @@ def run_another_phase_generation_round(corpus_func, pd, filter_num, colloc_num):
         return id_run
 
     #tokens = chain.from_iterable(imap(convert_to_phrase_tokens, imap(stk, corpus)))
-    tokens = chain.from_iterable(imap(convert_to_phrase_tokens, corpus_func))
+    tokens = chain.from_iterable(imap(convert_to_phrase_tokens, corpus_func()))
 
     collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
     collocation_finder.apply_freq_filter(filter_num)  # @TODO remove bottom X%, and tune on X
@@ -102,10 +102,7 @@ def run_another_phase_generation_round(corpus_func, pd, filter_num, colloc_num):
     print "another run phrases"
     map(pd.add_phrase, imap(lambda p: convert_run_to_text_token_run([p[0][0], p[1][0]], phrase_dictionary=pd), phrases))
     print "another run phrases Done"
-    #pprint([convert_run_to_text(ph, phrase_dictionary=pd) for ph in phrase_runs])
-    #print "another run phrases DUP"
-    #pprint(phrase_runs)
-    #map(pd.add_phrase, phrase_runs)
+
 
 
 
