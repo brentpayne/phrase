@@ -1,18 +1,14 @@
-import os
 from lettuce import step, world
-from corpus import FileCorpus
-from phrase_dictionary import PhraseDictionary
-from phrase_generation import generate_phrases
+from phrase.corpus import FileCorpusGenerator
+from phrase.phrase_generation import generate_phrases
 from units.helpers import convert_filename_into_data_file_path
-from tokenization import tokenize_text
-from word_list import WordList
 
 __author__ = 'brentpayne'
 
 
 @step(u'Given corpus:')
 def given_corpus(step):
-    world.corpus = FileCorpus()
+    world.corpus = FileCorpusGenerator()
     for input in step.hashes:
         if 'file' in input and input['file']:
             file = convert_filename_into_data_file_path(input['file'])
@@ -30,10 +26,9 @@ def generate_common_phrases(step):
     else:
         data = {}
     world.pd = generate_phrases(
-        world.corpus
+        world.corpus.generate
         , word_filter_num=1
         , phrase_filter_num=2
-        , total_number_of_phrases=10 if 'phrase_count' not in data else int(data['phrase_count'])
         , colloc_num_per_round=3 if 'colloc_per_round' not in data else int(data['colloc_per_round'])
         , colloc_rounds=4
     )

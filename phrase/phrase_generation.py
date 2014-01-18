@@ -31,7 +31,11 @@ EXCLUDE_SET1 = (")","(",",","'","\"")
 EXCLUDE_SET2 = (':',")","(",",","'","\"","-","a","on","the","!","?","of","n't","'re", "to")
 
 def exclude_ngram_filter(w1,w2):
-    return w2[1] not in ('NNP', 'NN', 'VBG', 'NNS', 'NNPS', 'FW', 'CD') or w2[0] in EXCLUDE_SET2 or w1[0] in EXCLUDE_SET1
+    if type(w1) in (tuple,list):
+        return w2[1] not in ('NNP', 'NN', 'VBG', 'NNS', 'NNPS', 'FW', 'CD')\
+                   or w2[0] in EXCLUDE_SET2 or w1[0] in EXCLUDE_SET1
+    else:
+        return False
 
 def generate_phrases(corpus_func, word_filter_num=1, phrase_filter_num=2, colloc_rounds=4, colloc_num_per_round=3):
     """

@@ -4,7 +4,6 @@ __author__ = 'brentpayne'
 
 
 class FileCorpus(list):
-
     def __init__(self, *files):
         """
         Initializes the FileCorpus with a list of files.
@@ -35,4 +34,23 @@ class FileCorpus(list):
         except IndexError as _:
             self.reset()
             raise StopIteration
+
+
+class FileCorpusGenerator(FileCorpus):
+    def __init__(self, *files):
+        """
+        Initializes the FileCorpus with a list of files.
+        :param files: a list of filepaths
+        :return: None
+        """
+        self.extend(files)
+
+    def generate(self):
+        return FileCorpus(*self)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.generate()
 
