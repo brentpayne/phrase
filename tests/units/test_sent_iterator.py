@@ -1,4 +1,4 @@
-from tokenization import SentenceIterator
+from phrase.tokenization import SentenceIterator
 
 __author__ = 'brentpayne'
 

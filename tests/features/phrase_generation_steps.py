@@ -1,6 +1,7 @@
 from lettuce import step, world
-from phrase.corpus import FileCorpusGenerator
-from phrase.phrase_generation import generate_phrases
+from phrase.corpus import CorpusGenerator
+from phrase.phrase_dictionary import PhraseDictionary
+from phrase.phrase_generation import generate_phrases, extend_phrase_dictionary
 from units.helpers import convert_filename_into_data_file_path
 
 __author__ = 'brentpayne'
@@ -8,7 +9,7 @@ __author__ = 'brentpayne'
 
 @step(u'Given corpus:')
 def given_corpus(step):
-    world.corpus = FileCorpusGenerator()
+    world.corpus = CorpusGenerator()
     for input in step.hashes:
         if 'file' in input and input['file']:
             file = convert_filename_into_data_file_path(input['file'])
@@ -21,17 +22,12 @@ def given_corpus(step):
 
 @step(u'Generate common phrases')
 def generate_common_phrases(step):
-    if step.hashes:
-        data = step.hashes[0]
-    else:
-        data = {}
-    world.pd = generate_phrases(
-        world.corpus.generate
-        , word_filter_num=1
-        , phrase_filter_num=2
-        , colloc_num_per_round=3 if 'colloc_per_round' not in data else int(data['colloc_per_round'])
-        , colloc_rounds=4
-    )
+    world.pd = PhraseDictionary()
+    for i in range(4):
+        world.pd = extend_phrase_dictionary(world.corpus.generate(),
+                                            PhraseDictionary.generate_phrase_detection_function(min_token_count=1, max_phrases=3),
+                                            world.pd)
+
 
 @step(u'The following phrases were identified:')
 def check_phrase_existance(step):

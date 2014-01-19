@@ -1,5 +1,5 @@
 import os
-from corpus import FileCorpus
+from phrase.corpus import FileCorpus
 from helpers import convert_filename_into_data_file_path
 
 __author__ = 'brentpayne'

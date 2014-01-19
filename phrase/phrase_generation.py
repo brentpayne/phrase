@@ -2,40 +2,30 @@ from collections import Counter
 from itertools import chain, imap
 from pprint import pprint
 import nltk
+from phrase.noun_phrase_dictionary import exclude_ngram_filter
 from phrase.phrase_dictionary import convert_run_to_text, convert_run_to_text_token_run
 from phrase_dictionary import PhraseDictionary
 
 __author__ = 'brentpayne'
 
+def extend_phrase_dictionary(corpus, phrase_discovery_function, phrase_dictionary):
+    """
 
-def add_to_word_counts(line, wc):
-    pass
+    :param corpus: a corpus of iterables of tokens.
+     Most commonly this returns a corpus of tokens broken up into sentence.
+     Or, restated, a list of sentences each split into tokens.
+    :param phrase_function: a function that takes a corpus of tokens returns phrases.
+     The return value is a list of lists with the interal lists being an ordered list of tokens.
+     The ordered list represents a single phrase.
+    :param phrase_dictionary: a PhraseDictionary or other type that implements both :func:`add` and :func:`process`
+    :return: returns a phrase_dictionary
+    """
+    tokens = chain.from_iterable(imap(phrase_dictionary.process, corpus))
+    phrases = phrase_discovery_function(tokens)
+    map(phrase_dictionary.add, phrases)
+    return phrase_dictionary
 
 
-def add_to_bigram_counts(line, bc):
-    pass
-
-
-def identify_merges(bc, wc):
-    pass
-
-
-def identify_deletes(word_counts):
-    pass
-
-
-def update_dictionary(dictionary, merges, deletes):
-    pass
-
-EXCLUDE_SET1 = (")","(",",","'","\"")
-EXCLUDE_SET2 = (':',")","(",",","'","\"","-","a","on","the","!","?","of","n't","'re", "to")
-
-def exclude_ngram_filter(w1,w2):
-    if type(w1) in (tuple,list):
-        return w2[1] not in ('NNP', 'NN', 'VBG', 'NNS', 'NNPS', 'FW', 'CD')\
-                   or w2[0] in EXCLUDE_SET2 or w1[0] in EXCLUDE_SET1
-    else:
-        return False
 
 def generate_phrases(corpus_func, word_filter_num=1, phrase_filter_num=2, colloc_rounds=4, colloc_num_per_round=3):
     """
@@ -104,7 +94,7 @@ def run_another_phase_generation_round(corpus_func, pd, filter_num, colloc_num):
     bigram_measures = nltk.collocations.BigramAssocMeasures()
     phrases = collocation_finder.nbest(bigram_measures.chi_sq, colloc_num)
     print "another run phrases"
-    map(pd.add_phrase, imap(lambda p: convert_run_to_text_token_run([p[0][0], p[1][0]], phrase_dictionary=pd), phrases))
+    map(pd.add, imap(lambda p: convert_run_to_text_token_run([p[0][0], p[1][0]], phrase_dictionary=pd), phrases))
     print "another run phrases Done"
 
 

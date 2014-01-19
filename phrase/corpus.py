@@ -24,29 +24,25 @@ class FileCorpus(list):
         return self
 
     def next(self):
-        self.idx += 1
-        try:
-            print "opening", self[self.idx]
-            with open(self[self.idx]) as fp:
-                txt = "".join(fp)
-            print "text", txt
-            return txt
-        except IndexError as _:
-            self.reset()
-            raise StopIteration
+        for filepath in self:
+            with open(filepath) as fp:
+                for line in fp:
+                    yield line
 
 
-class FileCorpusGenerator(FileCorpus):
-    def __init__(self, *files):
+class CorpusGenerator(FileCorpus):
+    def __init__(self, cls, *files):
         """
         Initializes the FileCorpus with a list of files.
+        :param cls: the cls type to generate
         :param files: a list of filepaths
         :return: None
         """
+        self.cls = cls
         self.extend(files)
 
     def generate(self):
-        return FileCorpus(*self)
+        return self.cls(*self)
 
     def __iter__(self):
         return self

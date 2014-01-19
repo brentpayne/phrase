@@ -1,5 +1,6 @@
 from copy import copy
 from itertools import imap
+import nltk
 from word_list import WordList
 
 __author__ = 'brentpayne'
@@ -17,27 +18,14 @@ class PhraseDictionary(dict):
         #self.phrase_id_gen = self.phrase_id_generator() cannot pickle generator
         self.word_list = word_list if word_list else WordList()
         if phrases:
-            map(self.add_phrase, phrases)
-
-    # def phrase_id_generator(self):
-    #     """
-    #     A generator for automatically labeling the next added phrase.
-    #     Phrase IDs are negative by convention, as Word IDs are positive by convention.
-    #     This is make it easy to extend and mix word ids and phrase ids without using the class system.
-    #     :return: the next negative phrase ID
-    #     """
-    #     id = 0
-    #     while True:
-    #         id -= 1
-    #         yield id
+            map(self.add, phrases)
 
     def get_next_id(self):
         rv = self.next_id
         self.next_id -= 1
         return rv
 
-
-    def add_phrase(self, phrase, id=None):
+    def add(self, phrase, id=None):
         """
         Adds a new phrase to the dictionary
         :param phrase: the new phrase as a list of tokens
@@ -46,7 +34,7 @@ class PhraseDictionary(dict):
         :return: None
         """
         phrase_id = id if id is not None else self.get_next_id()
-        PhraseDictionary._add_phrase(copy(phrase), phrase_id, self, self.word_list)
+        PhraseDictionary._add_phrase(phrase, phrase_id, self, self.word_list)
         self.id2phrase[phrase_id] = phrase
 
     @classmethod
@@ -62,12 +50,12 @@ class PhraseDictionary(dict):
         if dictionary is None:
             dictionary = {}
         if len(phrase):
-            current_word = phrase.pop(0)  # return the first word and remove it from the list
+            current_word = phrase[0]
             # if word_list is not None and current_word not in word_list: #@TODO remove, words should already be ids
             #     word_list.add(current_word)
             if current_word not in dictionary:
                 dictionary[current_word] = {}
-            cls._add_phrase(phrase, phrase_id, dictionary[current_word], word_list)
+            cls._add_phrase(phrase[1:], phrase_id, dictionary[current_word], word_list)
         else:
             dictionary[None] = phrase_id
         return dictionary
@@ -114,6 +102,15 @@ class PhraseDictionary(dict):
 
         return self.id2phrase.get(id, None)
 
+    def max_phrase(self, run, idx=0):
+        """
+        Finds the maximal phrase in the run starting from the given index.
+        :param run: a run of ids
+        :param idx: the position in the run to start looking for a merge sequence
+        :return: phrase_id or None, index after the phrase_id or the current index if no phrase was found.
+        """
+        return PhraseDictionary.return_max_phrase(run, idx, self)
+
     @staticmethod
     def return_max_phrase(run, idx, dictionary):
         """
@@ -128,7 +125,7 @@ class PhraseDictionary(dict):
         """
         if idx < len(run) and run[idx] in dictionary:
             id = run[idx]
-            rv, rv_idx = PhraseDictionary.return_max_phrase(run, idx+1, dictionary[id])
+            rv, rv_idx = PhraseDictionary.return_max_phrase(run, idx + 1, dictionary[id])
             if rv is not None:
                 return rv, rv_idx
 
@@ -138,24 +135,72 @@ class PhraseDictionary(dict):
             return None, None
 
     def merge_tokens(self, word_tokens):
-        if word_tokens is None or len(word_tokens)<0:
+        if word_tokens is None or len(word_tokens) < 0:
             return ""
-        phrase_ids = convert_to_merged_ids(word_tokens, self)
+        phrase_ids = self.convert_to_merged_ids(word_tokens, self)
         return convert_run_to_text(phrase_ids, phrase_dictionary=self)
 
-    def merge_pos_tokens(self, pos_tokens):
+    def convert_to_merged_ids(self, id_run):
         """
-        takes an array of Part of Speech labeled tokens and returns a set of tokens where word tokens have been merged into Noun phrases.
-        :param pos_tokens: an array of (token, POS)
-        :returns: returns an array of word and phrase tokens
+        Converts any identified phrases in the run into phrase_ids.  The dictionary provides all acceptable phrases
+        :param id_run: a run of token ids
+        :param dictionary: a dictionary of acceptable phrases described as there component token ids
+        :return: a run of token and phrase ids.
         """
-        if pos_tokens is None or len(pos_tokens)<0:
-            return ""
-        tokens, pos = zip(*pos_tokens)
-        pos_phrase_ids = convert_noun_phrases(tokens, pos, self)
-        phrase_ids, phrase_pos = zip(*pos_phrase_ids)
-        phrase_text = convert_run_to_text(phrase_ids, phrase_dictionary=self)
-        return zip(phrase_text, phrase_pos)
+        i = 0
+        rv = []
+        while i < len(id_run):
+            phrase_id, offset = self.max_phrase(id_run, i)
+            if phrase_id:
+                rv.append(phrase_id)
+                i = offset
+            else:
+                rv.append(id_run[i])
+                i += 1
+        return rv
+
+    def process(self, tokens):
+        icurrent = 0
+        id_run = []
+        while icurrent < len(tokens):
+            id, inext = self.max_phrase(tokens, icurrent)
+            if id is not None:
+                id_run.append(id)
+                icurrent = inext
+            else:
+                id_run.append(tokens[icurrent])
+                icurrent += 1
+
+        return id_run
+
+
+    exclude_ngram_filter = None
+    """
+    filter used to exclude ngrams in the phrase dectection function
+    """
+
+    @classmethod
+    def generate_phrase_detection_function(cls, min_token_count, max_phrases, exclude_ngram_filter=None):
+        """
+        This is a factory function for generating a phrase detection function
+        :param cls: the class
+        :param min_token_count: tokens that appear less than this will be ignored in the phrase detection function
+        :param max_phrases: the maximum number of phrases to return in the phrase detection function
+        :param exclude_ngram_filter: if defined, this function filters ngrams in the phrase detection function
+        :return:
+        """
+        #if exclude_ngram_filter is None and cls.exclude_ngram_filter:
+        #    exclude_ngram_filter = cls.exclude_ngram_filter
+        def phrase_detector(tokens):
+            collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
+            collocation_finder.apply_freq_filter(min_token_count)  # @TODO remove bottom X%, and tune on X
+            if exclude_ngram_filter:
+                collocation_finder.apply_ngram_filter(exclude_ngram_filter)
+            bigram_measures = nltk.collocations.BigramAssocMeasures()
+            phrases = collocation_finder.nbest(bigram_measures.chi_sq, max_phrases)
+            return phrases
+
+        return phrase_detector
 
 
 def convert_run_to_text(id_run, wordlist=None, phrase_dictionary=None):
@@ -168,52 +213,6 @@ def convert_run_to_text(id_run, wordlist=None, phrase_dictionary=None):
         else:
             rv.append(id)
 
-    return rv
-
-
-def convert_to_merged_ids(id_run, dictionary):
-    """
-    Converts any identified phrases in the run into phrase_ids.  The dictionary provides all acceptable phrases
-    :param id_run: a run of token ids
-    :param dictionary: a dictionary of acceptable phrases described as there component token ids
-    :return: a run of token and phrase ids.
-    """
-    i = 0
-    rv = []
-    while i < len(id_run):
-        phrase_id, offset = PhraseDictionary.return_max_phrase(id_run, i, dictionary)
-        if phrase_id:
-            rv.append(phrase_id)
-            i = offset
-        else:
-            rv.append(id_run[i])
-            i += 1
-    return rv
-
-
-def convert_noun_phrases(id_run, pos_run, dictionary):
-    """
-    Converts any identified phrases in the run into phrase_ids.  The dictionary provides all acceptable phrases
-    :param id_run: a run of token ids
-    :param dictionary: a dictionary of acceptable phrases described as there component token ids
-    :return: a run of token and phrase ids.
-    """
-    i = 0
-    rv = []
-    while i < len(id_run):
-        phrase_id, offset = PhraseDictionary.return_max_phrase(id_run, i, dictionary)
-        if phrase_id:
-            if pos_run[i] in ('JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP', 'NNPS', 'SYM', 'CD', 'VBG', 'FW', 'NP'):
-                print "MERGED", pos_run[i], dictionary.get_phrase(phrase_id)
-                rv.append((phrase_id,'NP'))
-                i = offset
-            else:
-                print "SKIPPED", pos_run[i], dictionary.get_phrase(phrase_id)
-                rv.append((id_run[i], pos_run[i]))
-                i += 1
-        else:
-            rv.append((id_run[i], pos_run[i]))
-            i += 1
     return rv
 
 
