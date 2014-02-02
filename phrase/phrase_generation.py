@@ -1,6 +1,6 @@
 from itertools import chain, imap
 import math
-from phrase.noun_phrase_dictionary import NounPhraseDictionary
+from phrase.noun_phrase_dictionary import NounPhraseDictionary, exclude_ngram_filter
 from phrase_dictionary import PhraseDictionary
 
 __author__ = 'brentpayne'
@@ -58,7 +58,9 @@ def generate_noun_phrase_dictionary(corpus_func, min_word_count=1, max_phrase_co
         if i == colloc_rounds-1:
             max_phrases_per_round = max_phrase_count-i*max_phrases_per_round
         phrase_dictionary = extend_phrase_dictionary(corpus_func(),
-                                NounPhraseDictionary.generate_phrase_detection_function(min_token_count=min_word_count, max_phrases=max_phrases_per_round),
+                                NounPhraseDictionary.generate_phrase_detection_function(min_token_count=min_word_count,
+                                                                                        max_phrases=max_phrases_per_round,
+                                                                                        exclude_ngram_filter=exclude_ngram_filter),
                                 phrase_dictionary)
 
     return phrase_dictionary

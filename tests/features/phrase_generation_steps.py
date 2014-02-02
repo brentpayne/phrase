@@ -27,7 +27,7 @@ def generate_common_phrases(step):
     world.pd = PhraseDictionary()
     for i in range(4):
         world.pd = extend_phrase_dictionary(world.corpus.generate(),
-                                            PhraseDictionary.generate_phrase_detection_function(min_token_count=3, max_phrases=5),
+                                            PhraseDictionary.generate_phrase_detection_function(min_token_count=3, max_phrases=20),
                                             world.pd)
 
 

@@ -8,6 +8,8 @@ __author__ = 'brentpayne'
 def almost_random_pos(token):
     pos = ('JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP', 'NNPS', 'SYM', 'CD', 'VBG', 'FW', 'NP', 'VV', 'JUNK',)
     rv = pos[random.randint(0, len(pos)-1)]
+    if token in ('The', 'Flying'):
+        rv = 'JJ'
     for sub in ('ersin', 'esti', 'onty', 'ython', 'ying', 'oly', 'r'):
         if sub in token:
             rv = 'NN'
@@ -32,11 +34,11 @@ def pos_corpus(step):
     world.corpus.generate = new_corpus_generate
 
 @step(u'Generate noun phrases')
-def generate_common_phrases(step):
+def generate_noun_phrases(step):
     world.pd = NounPhraseDictionary()
-    phrase_detection_alogrithm = NounPhraseDictionary.generate_phrase_detection_function(min_token_count=3, max_phrases=5, exclude_ngram_filter=exclude_ngram_filter)
+    phrase_detection_alogrithm = NounPhraseDictionary.generate_phrase_detection_function(min_token_count=3, max_phrases=20, exclude_ngram_filter=exclude_ngram_filter)
 
-    for i in range(4):
+    for i in range(5):
         world.pd = extend_phrase_dictionary(world.corpus.generate(),
                                             phrase_detection_alogrithm,
                                             world.pd)

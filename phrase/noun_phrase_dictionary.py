@@ -72,18 +72,8 @@ class NounPhraseDictionary(PhraseDictionary):
             pos_tokens.append(pos)
             text_tokens.append(tk)
 
-        icurrent = 0
-        id_run = []
-        while icurrent < len(text_tokens):
-            id, inext = self.max_phrase(text_tokens, icurrent)
-            if id is not None:
-                id_run.append((id, pos_tokens[inext-1]))
-                icurrent = inext
-            else:
-                id_run.append((text_tokens[icurrent], pos_tokens[icurrent]))
-                icurrent += 1
-
-        return id_run
+        rv = self.convert_noun_phrases(text_tokens, pos_tokens)
+        return rv
 
     def decompose(self, id_run):
         toks = []
@@ -93,13 +83,16 @@ class NounPhraseDictionary(PhraseDictionary):
 
 
 EXCLUDE_SET1 = (")","(",",","'","\"")
-EXCLUDE_SET2 = (':',")","(",",","'","\"","-","a","on","the","!","?","of","n't","'re", "to")
+EXCLUDE_SET2 = (':',")","(",",","'","\"","a","on","the","!","?","of","n't","'re", "to",".")
 
 
 def exclude_ngram_filter(w1,w2):
     if type(w1) in (tuple,list):
-        return w2[1] not in ('NNP', 'NN', 'VBG', 'NNS', 'NNPS', 'FW', 'CD')\
+        rv = w2[1] not in ('NNP', 'NN', 'VBG', 'NNS', 'NNPS', 'FW', 'CD', 'NP')\
                    or w2[0] in EXCLUDE_SET2 or w1[0] in EXCLUDE_SET1
+        return rv
     else:
+
         return False
+
 
