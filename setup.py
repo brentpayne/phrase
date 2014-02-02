@@ -18,7 +18,7 @@ else:
     requirements.extend(other_requirements)
 
 setup(name='phrase',
-        version='0.0.1',
+        version='00.00.02',
         description='A long long time ago in a land far far away...',
         author='Brent Payne',
         author_email='brent.payne@gmail.com',
