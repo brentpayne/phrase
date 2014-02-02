@@ -63,12 +63,12 @@ class NounPhraseDictionary(PhraseDictionary):
         """
         if len(phrase) > 0 and type(phrase[0]) in (tuple, list):
             phrase = [token[0] for token in phrase]
-        super(self, NounPhraseDictionary).add(phrase, id)
+        super(NounPhraseDictionary, self).add(phrase, id)
 
     def process(self, tokens):
         pos_tokens = []
         text_tokens = []
-        for tk, pos in chain.from_iterable(tokens):
+        for tk, pos in tokens:
             pos_tokens.append(pos)
             text_tokens.append(tk)
 
@@ -85,10 +85,16 @@ class NounPhraseDictionary(PhraseDictionary):
 
         return id_run
 
+    def decompose(self, id_run):
+        toks = []
+        for tok, pos in id_run:
+            toks.append(tok)
+        return super(NounPhraseDictionary, self).decompose(toks)
 
 
 EXCLUDE_SET1 = (")","(",",","'","\"")
 EXCLUDE_SET2 = (':',")","(",",","'","\"","-","a","on","the","!","?","of","n't","'re", "to")
+
 
 def exclude_ngram_filter(w1,w2):
     if type(w1) in (tuple,list):
