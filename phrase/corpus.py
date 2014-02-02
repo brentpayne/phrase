@@ -3,19 +3,26 @@ import os
 __author__ = 'brentpayne'
 
 
-class FileCorpus(list):
+class FileCorpus(object):
     def __init__(self, *files):
         """
         Initializes the FileCorpus with a list of files.
         :param files: a list of filepaths
         :return: None
         """
-        self.extend(files)
+        self.files = []
+        self.files.extend(files)
         self.idx = -1
+
+    def extend(self, *files):
+        self.files.extend(files)
+
+    def append(self, file):
+        self.files.append(file)
 
     def add_folder(self, folder):
         for root, dirs, files in os.walk(folder, topdown=False):
-            self.extend([os.path.join(root, name) for name in files])
+            self.files.extend([os.path.join(root, name) for name in files])
 
     def reset(self):
         self.idx = -1
@@ -25,28 +32,32 @@ class FileCorpus(list):
 
     def next(self):
         self.idx += 1
-        try:
-            print "opening", self[self.idx]
-            with open(self[self.idx]) as fp:
-                txt = "".join(fp)
-            print "text", txt
-            return txt
-        except IndexError as _:
-            self.reset()
+        if self.idx >= len(self.files):
+            self.idx = -1
             raise StopIteration
+        filepath = self.files[self.idx]
+        file_lines = []
+        with open(filepath) as fp:
+            for line in fp:
+                file_lines.append(line.split())
+        return file_lines
 
 
-class FileCorpusGenerator(FileCorpus):
-    def __init__(self, *files):
+
+
+class CorpusGenerator(FileCorpus):
+    def __init__(self, cls, *args):
         """
         Initializes the FileCorpus with a list of files.
+        :param cls: the cls type to generate
         :param files: a list of filepaths
         :return: None
         """
-        self.extend(files)
+        self.cls = cls
+        self.args = args
 
     def generate(self):
-        return FileCorpus(*self)
+        return self.cls(*self.args)
 
     def __iter__(self):
         return self
