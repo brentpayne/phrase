@@ -138,7 +138,7 @@ class PhraseDictionary(dict):
         if word_tokens is None or len(word_tokens) < 0:
             return ""
         phrase_ids = self.convert_to_merged_ids(word_tokens, self)
-        return convert_run_to_text(phrase_ids, phrase_dictionary=self)
+        return self.compose(phrase_ids)
 
     def convert_to_merged_ids(self, id_run):
         """
@@ -162,6 +162,9 @@ class PhraseDictionary(dict):
     def process(self, tokens):
         icurrent = 0
         id_run = []
+        if type(tokens) != list:
+            # the phrase generation process requires random access
+            tokens = list(tokens)
         while icurrent < len(tokens):
             id, inext = self.max_phrase(tokens, icurrent)
             if id is not None:
@@ -173,6 +176,18 @@ class PhraseDictionary(dict):
 
         return id_run
 
+    def compose(self, ids):
+        return convert_run_to_text(ids, phrase_dictionary=self)
+
+    def decompose(self, id_run):
+        rv = []
+        for id in id_run:
+            if self.contains(id):
+                rv.extend(convert_run_to_text(self.get_phrase(id), self))
+            else:
+                rv.append(id)
+
+        return rv
 
     exclude_ngram_filter = None
     """

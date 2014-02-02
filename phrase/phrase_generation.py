@@ -11,8 +11,8 @@ __author__ = 'brentpayne'
 def extend_phrase_dictionary(corpus, phrase_discovery_function, phrase_dictionary):
     """
 
-    :param corpus: a corpus of iterables of tokens.
-     Most commonly this returns a corpus of tokens broken up into sentence.
+    :param corpus: a corpus of document of sentences of tokens.
+    So an iterable of iterables of iterables of tokens : corpus of files of sentences of tokens
      Or, restated, a list of sentences each split into tokens.
     :param phrase_function: a function that takes a corpus of tokens returns phrases.
      The return value is a list of lists with the interal lists being an ordered list of tokens.
@@ -20,9 +20,10 @@ def extend_phrase_dictionary(corpus, phrase_discovery_function, phrase_dictionar
     :param phrase_dictionary: a PhraseDictionary or other type that implements both :func:`add` and :func:`process`
     :return: returns a phrase_dictionary
     """
-    tokens = chain.from_iterable(imap(phrase_dictionary.process, corpus))
+    sentences = chain.from_iterable(corpus)
+    tokens = chain.from_iterable(imap(phrase_dictionary.process, sentences))
     phrases = phrase_discovery_function(tokens)
-    map(phrase_dictionary.add, phrases)
+    map(phrase_dictionary.add, (phrase_dictionary.decompose(ph) for ph in phrases))
     return phrase_dictionary
 
 
