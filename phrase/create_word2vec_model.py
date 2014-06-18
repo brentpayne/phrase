@@ -25,10 +25,6 @@ def main(foobar, folder, phrase_pkl, model_filename):
     model = Word2Vec(sentences, size=10000, window=7, min_count=4, workers=4)
     model.save(model_filename)
 
-    print model.most_similar(positive=['Luke', 'Luke_Skywalker'], negative=["Darth_Vader", "Vader"])
-    print model.most_similar(positive=['Luke', 'Luke_Skywalker'], negative=["Darth_Vader", "Vader"])
-    print model.most_similar(positive=['Luke', 'Luke_Skywalker'], negative=["Darth_Vader", "Vader"])
-
 if __name__ == "__main__":
     import sys
     print sys.argv
