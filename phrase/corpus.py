@@ -3,7 +3,7 @@ import os
 __author__ = 'brentpayne'
 
 
-class FileBackedDocumentCorpus(object):
+class FileCorpus(object):
     def __init__(self, *files):
         """
         Initializes the FileCorpus with a list of files.
@@ -12,7 +12,6 @@ class FileBackedDocumentCorpus(object):
         """
         self.files = []
         self.files.extend(files)
-        self.idx = -1
 
     def extend(self, *files):
         self.files.extend(files)
@@ -23,6 +22,20 @@ class FileBackedDocumentCorpus(object):
     def add_folder(self, folder):
         for root, dirs, files in os.walk(folder, topdown=False):
             self.files.extend([os.path.join(root, name) for name in files])
+
+    def get_iterator(self):
+        return FileBackedDocumentIterator(self)
+
+class FileBackedDocumentIterator(object):
+    def __init__(self, corpus):
+        """
+        Initializes the FileCorpus with a list of files.
+        :param files: a list of filepaths
+        :return: None
+        """
+        self.files = []
+        self.files.extend(corpus.files)
+        self.idx = -1
 
     def reset(self):
         self.idx = -1
@@ -42,26 +55,24 @@ class FileBackedDocumentCorpus(object):
                 file_lines.append(line.split())
         return file_lines
 
-
-
-
-class BackedDocumentCorpusGenerator(FileBackedDocumentCorpus):
-    def __init__(self, cls, *args):
-        """
-        Initializes the FileCorpus with a list of files.
-        :param cls: the cls type to generate
-        :param files: a list of filepaths
-        :return: None
-        """
-        self.cls = cls
-        self.args = args
-
-    def generate(self):
-        return self.cls(*self.args)
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        return self.generate()
+#
+#class DocumentIteratorGenerator(FileBackedDocumentIterator):
+#    def __init__(self, cls, *args):
+#        """
+#        Initializes the FileBackedDocumentIterator with a list of files.
+#        :param cls: the cls type to generate
+#        :param files: a list of filepaths
+#        :return: None
+#        """
+#        self.cls = cls
+#        self.args = args
+#
+#    def generate(self):
+#        return self.cls(*self.args)
+#
+#    def __iter__(self):
+#        return self
+#
+#    def next(self):
+#        return self.generate()
 

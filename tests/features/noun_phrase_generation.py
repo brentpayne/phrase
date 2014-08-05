@@ -28,19 +28,20 @@ class PoSCorpusWrapper(object):
 
 @step(u'Run PoS over corpus')
 def pos_corpus(step):
-    prev_gen = world.corpus.generate
-    def new_corpus_generate():
-        return PoSCorpusWrapper(prev_gen())
-    world.corpus.generate = new_corpus_generate
+    prev_get_iterator = world.corpus.get_iterator
+
+    def new_corpus_get_iterator():
+        return PoSCorpusWrapper(prev_get_iterator())
+    world.corpus.get_iterator = new_corpus_get_iterator
 
 @step(u'Generate noun phrases')
 def generate_noun_phrases(step):
     world.pd = NounPhraseDictionary()
-    phrase_detection_alogrithm = NounPhraseDictionary.generate_phrase_detection_function(min_token_count=3, max_phrases=20, exclude_ngram_filter=exclude_ngram_filter)
+    phrase_detection_algorithm = NounPhraseDictionary.generate_phrase_detection_function(min_token_count=3, max_phrases=20, exclude_ngram_filter=exclude_ngram_filter)
 
     for i in range(5):
-        world.pd = extend_phrase_dictionary(world.corpus.generate(),
-                                            phrase_detection_alogrithm,
+        world.pd = extend_phrase_dictionary(world.corpus.get_iterator(),
+                                            phrase_detection_algorithm,
                                             world.pd)
 
 @step(u'The following noun phrases were identified:')

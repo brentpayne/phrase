@@ -42,7 +42,7 @@ class my_develop(develop):
 
 setup(
     name='phrase',
-    version='0.0.5',
+    version='0.0.7',
     description='Phrase: generates phrases given a corpus',
     author='Brent Payne',
     author_email='brent.payne@gmail.com',

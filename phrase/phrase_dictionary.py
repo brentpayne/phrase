@@ -1,5 +1,6 @@
 from copy import copy
 from itertools import imap
+import pdb
 import nltk
 from word_list import WordList
 
@@ -206,7 +207,10 @@ class PhraseDictionary(dict):
         """
         #if exclude_ngram_filter is None and cls.exclude_ngram_filter:
         #    exclude_ngram_filter = cls.exclude_ngram_filter
+
         def phrase_detector(tokens):
+            #if not isinstance(tokens, list):
+            #    tokens = list(tokens)
             collocation_finder = nltk.collocations.BigramCollocationFinder.from_words(tokens)
             collocation_finder.apply_freq_filter(min_token_count)  # @TODO remove bottom X%, and tune on X
             if exclude_ngram_filter:
