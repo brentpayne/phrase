@@ -8,16 +8,8 @@ from pip.req import parse_requirements
 
 __dir__ = os.path.dirname(os.path.realpath(__file__))
 
-# parse_requirements() returns generator of pip.req.InstallRequirement objects
 install_reqs = parse_requirements(__dir__ + "/requirements.txt")
-
-# requirements is a list of required packages listed in the requirements.txt file
-# e.g. ['django==1.5.1', 'mezzanine==1.4.6']
 requirements = [str(ir.req) for ir in install_reqs]
-requirements = [
-    'gensim>=0.9.1',
-    'nltk>=2.0.4',
-]
 
 test_requirements = [
     'nose>=1.3.3',
@@ -49,12 +41,12 @@ class my_develop(develop):
 
 setup(
     name='phrase',
-    version='0.0.4',
+    version='0.0.5',
     description='Phrase: generates phrases given a corpus',
     author='Brent Payne',
     author_email='brent.payne@gmail.com',
     url='http://www.github.com/brentpayne/phrase',
-    install_requires=requirements,
+    install_requires=requirements + test_requirements,
     cmdclass={'install': my_install, 'develop': my_develop},
     entry_points="""
             [console_scripts]
