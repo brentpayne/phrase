@@ -13,11 +13,12 @@ requirements = [str(ir.req) for ir in install_reqs]
 
 test_requirements = [
     'nose>=1.3.3',
-    'pytest-bdd>=2.3.1'
+    'pytest-bdd>=2.3.1',
     'pytest>=2.6',
     'lettuce'
 ]
 
+print requirements
 
 def _post_install():
     import nltk
@@ -46,7 +47,7 @@ setup(
     author='Brent Payne',
     author_email='brent.payne@gmail.com',
     url='http://www.github.com/brentpayne/phrase',
-    install_requires=requirements + test_requirements,
+    install_requires=requirements,
     cmdclass={'install': my_install, 'develop': my_develop},
     entry_points="""
             [console_scripts]
