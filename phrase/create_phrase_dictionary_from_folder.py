@@ -1,6 +1,5 @@
 import pickle
-from corpus import FileCorpus
-from phrase_generation import generate_phrases
+from .corpus import FileBackedDocumentCorpus
 
 __author__ = 'brentpayne'
 
@@ -11,7 +10,7 @@ def main():
     folder = sys.argv[1]
     pkl_filename = sys.argv[2]
     options = {}
-    corpus = FileCorpus()
+    corpus = FileBackedDocumentCorpus()
     corpus.add_folder(folder)
     pd = generate_phrases(
         corpus

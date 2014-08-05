@@ -1,11 +1,11 @@
-from phrase.corpus import FileCorpus
+from phrase.corpus import FileBackedDocumentCorpus
 from helpers import convert_filename_into_data_file_path
 
 __author__ = 'brentpayne'
 
 
 def test_can_open_multiple_files_multiple_times():
-    corpus = FileCorpus()
+    corpus = FileBackedDocumentCorpus()
     corpus.append(convert_filename_into_data_file_path("the_monty_python_flying_circus.txt"))
     corpus.append(convert_filename_into_data_file_path("the_monty_python_flying_circus.txt"))
     assert len(corpus.files) == 2

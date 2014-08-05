@@ -3,7 +3,7 @@ import os
 __author__ = 'brentpayne'
 
 
-class FileCorpus(object):
+class FileBackedDocumentCorpus(object):
     def __init__(self, *files):
         """
         Initializes the FileCorpus with a list of files.
@@ -45,7 +45,7 @@ class FileCorpus(object):
 
 
 
-class CorpusGenerator(FileCorpus):
+class BackedDocumentCorpusGenerator(FileBackedDocumentCorpus):
     def __init__(self, cls, *args):
         """
         Initializes the FileCorpus with a list of files.

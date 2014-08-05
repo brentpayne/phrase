@@ -1,5 +1,5 @@
 from lettuce import step, world
-from phrase.corpus import CorpusGenerator, FileCorpus
+from phrase.corpus import BackedDocumentCorpusGenerator, FileBackedDocumentCorpus
 from phrase.phrase_dictionary import PhraseDictionary
 from phrase.phrase_generation import extend_phrase_dictionary
 from units.helpers import convert_filename_into_data_file_path
@@ -10,7 +10,7 @@ __author__ = 'brentpayne'
 @step(u'Given corpus:')
 def given_corpus(step):
     files = []
-    fc = FileCorpus()
+    fc = FileBackedDocumentCorpus()
     for input in step.hashes:
         if 'file' in input and input['file']:
             file = convert_filename_into_data_file_path(input['file'])
@@ -18,7 +18,7 @@ def given_corpus(step):
         if 'folder' in input and input['folder']:
             folder = convert_filename_into_data_file_path(input['folder'])
             fc.add_folder(folder)
-    world.corpus = CorpusGenerator(FileCorpus, *fc.files)
+    world.corpus = BackedDocumentCorpusGenerator(FileBackedDocumentCorpus, *fc.files)
 
 
 

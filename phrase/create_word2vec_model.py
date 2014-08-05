@@ -2,7 +2,7 @@ from itertools import imap, chain
 import pickle
 from gensim.models import Word2Vec
 from nltk import pos_tag, word_tokenize as wtk, sent_tokenize as stk
-from corpus import FileCorpus
+from corpus import FileBackedDocumentCorpus
 from phrase.phrase_dictionary import convert_run_to_text, convert_to_merged_ids
 from phrase_generation import generate_phrases
 
@@ -11,7 +11,7 @@ __author__ = 'brentpayne'
 
 
 def main(foobar, folder, phrase_pkl, model_filename):
-    corpus = FileCorpus()
+    corpus = FileBackedDocumentCorpus()
     corpus.add_folder(folder)
 
     with open(phrase_pkl, 'r') as fp:

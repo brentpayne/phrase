@@ -5,6 +5,7 @@ from phrase_dictionary import PhraseDictionary
 
 __author__ = 'brentpayne'
 
+
 def extend_phrase_dictionary(corpus, phrase_discovery_function, phrase_dictionary):
     """
 

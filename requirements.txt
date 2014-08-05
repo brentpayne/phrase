@@ -1,1 +1,2 @@
-nltk
+gensim>=0.10.1
+nltk>=2.0.3
