@@ -8,8 +8,10 @@ from pip.req import parse_requirements
 
 __dir__ = os.path.dirname(os.path.realpath(__file__))
 
-install_reqs = parse_requirements(__dir__ + "/requirements.txt")
-requirements = [str(ir.req) for ir in install_reqs]
+requirements = [
+    'gensim>=0.10.1',
+    'nltk>=2.0.3'
+]
 
 test_requirements = [
     'nose>=1.3.3',
@@ -42,7 +44,7 @@ class my_develop(develop):
 
 setup(
     name='phrase',
-    version='0.0.8',
+    version='0.0.9',
     description='Phrase: generates phrases given a corpus',
     author='Brent Payne',
     author_email='brent.payne@gmail.com',
