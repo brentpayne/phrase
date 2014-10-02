@@ -23,8 +23,13 @@ test_requirements = [
 print requirements
 
 def _post_install():
+    # nltk may have just been installed, if so we cannot import it
+    #  unless we first update our path by reloading the site package
+    # thanks stack overflow: https://stackoverflow.com/questions/25384922/how-to-refresh-sys-path
+    import site
+    reload(site)
+    # We can now safely import nltk, even if it was just installed
     import nltk
-
     nltk.download('punkt')
 
 
@@ -41,11 +46,16 @@ class my_develop(develop):
         self.execute(_post_install, [],
                      msg="Running post develop task")
 
+short_description='Phrase: generates phrases given a corpus'
+long_description=short_description
+with open('README.md') as fp:
+    long_description = fp.read()
 
 setup(
     name='phrase',
-    version='0.0.9',
-    description='Phrase: generates phrases given a corpus',
+    version='0.0.10',
+    description=short_description,
+    long_description=long_description,
     author='Brent Payne',
     author_email='brent.payne@gmail.com',
     url='http://www.github.com/brentpayne/phrase',
@@ -55,9 +65,7 @@ setup(
             [console_scripts]
             create_phrase_dictionary = phrase.create_phrase_dictionary_from_folder:main
         """,
-    packages=[
-        'phrase',
-    ],
+    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     keywords=['phrase', 'noun phrase', 'verb phrase', 'nlp',
               'natural language processing', 'language', 'language processing',
               'phrases', 'nltk'
